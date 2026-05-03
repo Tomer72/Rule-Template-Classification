@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "OfficeName": "משרד האוצר",
+    "BidNumber": "123/2026",
+    "BidName": "שירותי תוכנה",
+    "IsBasket": "true",
+    "IsSingleWinner": "true",
+    "WinnerCount": "3",
+    "ExtensionMonths": "12"
+  },
+  "collections": {
+    "Baskets": [
+      {
+        "BasketNumber": "1",
+        "BasketName": "פיתוח מערכות",
+        "BasketScopeInShekels": "250,000"
+      },
+      {
+        "BasketNumber": "2",
+        "BasketName": "תחזוקת מערכות",
+        "BasketScopeInShekels": "150,000"
+      }
+    ]
+  }
+}

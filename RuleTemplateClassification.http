@@ -1,0 +1,5 @@
+POST http://localhost:5225/render
+Content-Type: application/json
+
+< Data/sample-input2.json
+

@@ -1,0 +1,33 @@
+# Build output
+bin/
+obj/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code / Visual Studio local files
+.vscode/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# macOS
+.DS_Store
+
+# Local SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+# Logs / temporary output
+*.log
+Data/output.txt
+
+# Rider HTTP client generated files
+.idea/**/httpRequests/
+
+# Local app settings with secrets
+appsettings.*.local.json

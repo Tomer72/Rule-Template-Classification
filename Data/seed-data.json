@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "sectionNumber": "1",
+    "parentId": null,
+    "order": 1,
+    "ruleType": "FillField",
+    "textPlaceholder": "מדינת ישראל - {{OfficeName}}",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 2,
+    "sectionNumber": "2.1",
+    "parentId": null,
+    "order": 2,
+    "ruleType": "FillField",
+    "textPlaceholder": "המשרד {{OfficeName}} מפרסם מכרז מספר {{BidNumber}} בשם {{BidName}}.",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 3,
+    "sectionNumber": "2.2",
+    "parentId": null,
+    "order": 3,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "מכרז זה הוא מכרז סלים.",
+    "fieldName": null,
+    "conditionFieldName": "IsBasket",
+    "expectedValue": "true"
+  },
+  {
+    "id": 4,
+    "sectionNumber": "2.3",
+    "parentId": null,
+    "order": 4,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "המזמין רשאי לבחור זוכה יחיד במכרז.",
+    "fieldName": null,
+    "conditionFieldName": "IsSingleWinner",
+    "expectedValue": "true"
+  },
+  {
+    "id": 5,
+    "sectionNumber": "2.4",
+    "parentId": null,
+    "order": 5,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "המזמין רשאי לבחור עד {{WinnerCount}} זוכים במכרז.",
+    "fieldName": null,
+    "conditionFieldName": "IsSingleWinner",
+    "expectedValue": "false"
+  },
+  {
+    "id": 6,
+    "sectionNumber": "2.5",
+    "parentId": null,
+    "order": 6,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "למזמין שמורה אופציה להארכה של {{ExtensionMonths}} חודשים.",
+    "fieldName": "ExtensionMonths",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 7,
+    "sectionNumber": "2.6",
+    "parentId": null,
+    "order": 7,
+    "ruleType": "RepetitiveField",
+    "textPlaceholder": "סל {{BasketNumber}} - {{BasketName}}, היקף: {{BasketScopeInShekels}} ש\"ח.",
+    "fieldName": "Baskets",
+    "conditionFieldName": null,
+    "expectedValue": null
+  }
+]

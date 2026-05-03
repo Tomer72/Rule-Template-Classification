@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "sectionNumber": "1",
+    "parentId": null,
+    "order": 1,
+    "ruleType": "FillField",
+    "textPlaceholder": "מדינת ישראל - {{OfficeName}}",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 2,
+    "sectionNumber": "1.1",
+    "parentId": null,
+    "order": 2,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "אגף: {{DepartmentName}}",
+    "fieldName": "DepartmentName",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 3,
+    "sectionNumber": "1.2",
+    "parentId": null,
+    "order": 3,
+    "ruleType": "FillField",
+    "textPlaceholder": "מכרז {{BidNumber}}",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 4,
+    "sectionNumber": "1.3",
+    "parentId": null,
+    "order": 4,
+    "ruleType": "FillField",
+    "textPlaceholder": "ל{{BidName}}",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 5,
+    "sectionNumber": "1.4",
+    "parentId": null,
+    "order": 5,
+    "ruleType": "FillField",
+    "textPlaceholder": "את מסמכי המכרז ניתן למצוא באתר האינטרנט של מינהל הרכש הממשלתי בכתובת: www.mr.gov.il תחת הכותרת – מכרז {{BidNumber}} – {{BidName}}.",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 6,
+    "sectionNumber": "1.5",
+    "parentId": null,
+    "order": 6,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "הקדמה",
+    "fieldName": null,
+    "conditionFieldName": "IsIntroEdited",
+    "expectedValue": "true"
+  },
+  {
+    "id": 7,
+    "sectionNumber": "1.6",
+    "parentId": null,
+    "order": 7,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "{{OfficeName}} (\"המזמין\"), מפרסם בזאת מכרז {{BidNumber}} ל{{BidName}} (\"המכרז\").",
+    "fieldName": null,
+    "conditionFieldName": "IsIntroEdited",
+    "expectedValue": "false"
+  },
+  {
+    "id": 8,
+    "sectionNumber": "1.7",
+    "parentId": null,
+    "order": 8,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "{{BackgroundDescription}}",
+    "fieldName": "BackgroundDescription",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 9,
+    "sectionNumber": "1.8",
+    "parentId": null,
+    "order": 9,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "מכרז זה הוא \"מכרז סלים\" בו המציעים יכולים להגיש את הצעתם לחלקים שונים של המכרז, כמפורט במסגרת מסמכי המכרז.",
+    "fieldName": null,
+    "conditionFieldName": "IsBasket",
+    "expectedValue": "true"
+  },
+  {
+    "id": 10,
+    "sectionNumber": "1.9",
+    "parentId": null,
+    "order": 10,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "הזוכה שיוכרז במכרז יחתום על הסכם התקשרות עם המזמין לתקופה של {{DurationMonths}} חודשים.",
+    "fieldName": null,
+    "conditionFieldName": "IsSingleWinner",
+    "expectedValue": "true"
+  },
+  {
+    "id": 11,
+    "sectionNumber": "1.10",
+    "parentId": null,
+    "order": 11,
+    "ruleType": "AlternativeField",
+    "textPlaceholder": "המזמין רשאי לבחור עד {{WinnerCount}} זוכים במכרז.",
+    "fieldName": null,
+    "conditionFieldName": "IsSingleWinner",
+    "expectedValue": "false"
+  },
+  {
+    "id": 12,
+    "sectionNumber": "1.11",
+    "parentId": null,
+    "order": 12,
+    "ruleType": "FillField",
+    "textPlaceholder": "ההתקשרות תהיה לתקופה של {{DurationMonths}} חודשים.",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 13,
+    "sectionNumber": "1.12",
+    "parentId": null,
+    "order": 13,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "למזמין שמורה הזכות להאריך את תקופת ההתקשרות בתקופות נוספות, ועד ל-{{ExtensionMonths}} חודשים נוספים.",
+    "fieldName": "ExtensionMonths",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 14,
+    "sectionNumber": "1.13",
+    "parentId": null,
+    "order": 14,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "היקף ההתקשרות לא יעלה על {{ScopeInShekels}} ₪ כולל מע\"מ.",
+    "fieldName": null,
+    "conditionFieldName": "ShowContractScopeInDocuments",
+    "expectedValue": "true"
+  },
+  {
+    "id": 15,
+    "sectionNumber": "1.14",
+    "parentId": null,
+    "order": 15,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "היקף התקשרות זה כולל את הערכת היקף התשלומים בגין סבסוד הארוחות.",
+    "fieldName": null,
+    "conditionFieldName": "IsCateringServices",
+    "expectedValue": "true"
+  },
+  {
+    "id": 16,
+    "sectionNumber": "1.15",
+    "parentId": null,
+    "order": 16,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "בנוסף, למזמין שמורה הזכות להגדיל את היקף ההתקשרות בסכום של עד {{OptionInShekels}} ₪ כולל מע\"מ.",
+    "fieldName": "OptionInShekels",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 17,
+    "sectionNumber": "1.16",
+    "parentId": null,
+    "order": 17,
+    "ruleType": "RepetitiveField",
+    "textPlaceholder": "סל {{BasketNumber}} - {{BasketName}} | היקף התקשרות מירבי: {{BasketScopeInShekels}} ש\"ח | זכות ברירה: {{BasketOptionInShekels}}",
+    "fieldName": "Baskets",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 18,
+    "sectionNumber": "1.17",
+    "parentId": null,
+    "order": 18,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "לנוחות המציעים, להלן פירוט היקפי הרכש שביצע המזמין בנושא המכרז בין השנים {{PreviousContractsStartYear}}-{{PreviousContractsEndYear}}: {{PreviousContractsScope}}.",
+    "fieldName": null,
+    "conditionFieldName": "ShowPreviousContractsScope",
+    "expectedValue": "true"
+  },
+  {
+    "id": 19,
+    "sectionNumber": "1.18",
+    "parentId": null,
+    "order": 19,
+    "ruleType": "OptionalField",
+    "textPlaceholder": "פרק ג'1 – מפרט טכני של הטובין / המערכת.",
+    "fieldName": "HasTechnicalSpecification",
+    "conditionFieldName": null,
+    "expectedValue": null
+  },
+  {
+    "id": 20,
+    "sectionNumber": "1.19",
+    "parentId": null,
+    "order": 20,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "המועד האחרון להגשת הצעות במכרז הוא בתאריך {{SubmissionDate}} בשעה {{SubmissionTime}}.",
+    "fieldName": null,
+    "conditionFieldName": "TenderBoxType",
+    "expectedValue": "Regular"
+  }
+]

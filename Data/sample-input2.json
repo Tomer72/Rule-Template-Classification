@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "OfficeName": "משרד האוצר",
+    "DepartmentName": "אגף מערכות מידע",
+    "BidNumber": "123/2026",
+    "BidName": "שירותי תוכנה",
+    "IsIntroEdited": "false",
+    "BackgroundDescription": "המכרז נועד לאפשר התקשרות עם ספקים לצורך פיתוח, תחזוקה ושדרוג של מערכות מידע ממשלתיות.",
+    "IsBasket": "true",
+    "IsSingleWinner": "false",
+    "WinnerCount": "3",
+    "DurationMonths": "24",
+    "ExtensionMonths": "12",
+    "ShowContractScopeInDocuments": "true",
+    "ScopeInShekels": "500,000",
+    "IsCateringServices": "true",
+    "OptionInShekels": "100,000",
+    "ShowPreviousContractsScope": "true",
+    "PreviousContractsStartYear": "2021",
+    "PreviousContractsEndYear": "2024",
+    "PreviousContractsScope": "כ-1,200,000 ₪",
+    "HasTechnicalSpecification": "true",
+    "TenderBoxType": "Regular",
+    "SubmissionDate": "30/06/2026",
+    "SubmissionTime": "14:00"
+  },
+  "collections": {
+    "Baskets": [
+      {
+        "BasketNumber": "1",
+        "BasketName": "פיתוח מערכות",
+        "BasketScopeInShekels": "250,000",
+        "BasketOptionInShekels": "50,000"
+      },
+      {
+        "BasketNumber": "2",
+        "BasketName": "תחזוקת מערכות",
+        "BasketScopeInShekels": "150,000",
+        "BasketOptionInShekels": "ללא"
+      },
+      {
+        "BasketNumber": "3",
+        "BasketName": "בדיקות ואבטחת איכות",
+        "BasketScopeInShekels": "100,000",
+        "BasketOptionInShekels": "25,000"
+      }
+    ]
+  }
+}

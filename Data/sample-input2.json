@@ -22,7 +22,9 @@
     "HasTechnicalSpecification": "true",
     "TenderBoxType": "Regular",
     "SubmissionDate": "30/06/2026",
-    "SubmissionTime": "14:00"
+    "SubmissionTime": "14:00",
+    "HasContactInfo": "false",
+    "ContactPhone": "03-1234567"
   },
   "collections": {
     "Baskets": [

@@ -14,41 +14,34 @@ public class RenderService(AppDbContext dbContext)
 
     public string ProcessInput(RenderRequest request)
     {
-        // Retrieving info from the DB
         var nodes = dbContext.TemplateNodes
             .OrderBy(node => node.Order)
-            .ThenBy(node => node.SectionNumber)
             .ToList();
-        
+
         var processedLines = new List<string>();
         var context = request.Fields;
         var collections = request.Collections;
-        var parentsSet = new HashSet<string>();
-        
+        var renderedIds = new HashSet<int>();
+
         foreach (var node in nodes)
         {
-            var ruleType = node.RuleType;
-            var result = "";
-            var sectionNumberParent = (node.SectionNumber).Split()[0];
+            // Skip child nodes whose parent did not render
+            if (node.ParentId.HasValue && !renderedIds.Contains(node.ParentId.Value)) continue;
 
-            if (node.ParentId != null && !parentsSet.Contains(sectionNumberParent)) continue;
-
-            result = ruleType switch
+            var result = node.RuleType switch
             {
                 "FillField" => _fillFieldHandler.Handle(node, context),
                 "AlternativeField" => _alternativeFieldHandler.Handle(node, context),
                 "ConditionalField" => _conditionalFieldHandler.Handle(node, context),
                 "OptionalField" => _optionalFieldHandler.Handle(node, context),
                 "RepetitiveField" => _repetitiveFieldHandler.Handle(node, collections),
-                _ => result
+                _ => ""
             };
 
             if (result == "") continue;
-            
-            // Add the processed text to the processed lines and add parent if needed
+
             processedLines.Add(node.SectionNumber + ". " + result);
-            parentsSet.Add(sectionNumberParent);
-            
+            renderedIds.Add(node.Id);
         }
         var finalText = string.Join(Environment.NewLine, processedLines);
         File.WriteAllText("Data/output.txt", finalText);

@@ -218,5 +218,27 @@
     "fieldName": null,
     "conditionFieldName": "TenderBoxType",
     "expectedValue": "Regular"
+  },
+  {
+    "id": 21,
+    "sectionNumber": "1.20",
+    "parentId": null,
+    "order": 21,
+    "ruleType": "ConditionalField",
+    "textPlaceholder": "פרטי איש קשר למכרז:",
+    "fieldName": null,
+    "conditionFieldName": "HasContactInfo",
+    "expectedValue": "true"
+  },
+  {
+    "id": 22,
+    "sectionNumber": "1.21",
+    "parentId": 21,
+    "order": 22,
+    "ruleType": "FillField",
+    "textPlaceholder": "טלפון: {{ContactPhone}}",
+    "fieldName": null,
+    "conditionFieldName": null,
+    "expectedValue": null
   }
 ]

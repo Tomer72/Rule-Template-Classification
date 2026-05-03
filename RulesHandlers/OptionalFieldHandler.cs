@@ -7,7 +7,9 @@ public class OptionalFieldHandler
     public string Handle(TemplateNode node, Dictionary<string, string?> fields)
     {
         var fieldName = node.FieldName;
-        return fields.TryGetValue(fieldName!, out var fieldValue) ?
-            _fillFieldHandler.Handle(node, fields) : "";
+        return fields.TryGetValue(fieldName!, out var fieldValue) &&
+               !string.IsNullOrEmpty(fieldValue)
+            ? _fillFieldHandler.Handle(node, fields)
+            : "";
     }
 }

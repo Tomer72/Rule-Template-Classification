@@ -1,15 +1,34 @@
 # Rule Template Classification
 
-Rule Template Classification is a small ASP.NET Core Web API that renders a text document from template rules stored in SQLite. The API receives structured input, loads ordered template nodes from the database, applies rule handlers, and returns the rendered output.
+Rule Template Classification is an ASP.NET Core Web API that renders a tender document from rule-based template data.
 
-The project is intended to demonstrate a rule-based rendering flow for document templates, including filled fields, conditional sections, alternative sections, optional sections, and repeated collection sections.
+The application receives structured JSON input, loads template sections from a local SQLite database, applies rule handlers, and returns the final rendered text. It is designed as a focused demonstration of dynamic document generation using fill rules, conditional rules, alternative text rules, optional sections, and repeated collection sections.
 
 ## Tech Stack
 
-- ASP.NET Core Web API
+- .NET 10
+- ASP.NET Core Minimal API
 - Entity Framework Core
 - SQLite
-- .NET 10
+
+## What The Project Does
+
+The API exposes one endpoint:
+
+```http
+POST /render
+```
+
+The request body contains:
+
+- `fields`: single-value inputs used for placeholders and conditions.
+- `collections`: repeated data groups used by repetitive sections.
+
+The response is a plain-text rendered document, An example rendered result is included in:
+
+```text
+Data/example-output.txt
+```
 
 ## Project Structure
 
@@ -18,9 +37,10 @@ RuleTemplateClassification/
 ├── Data/
 │   ├── AppDbContext.cs
 │   ├── DatabaseSetup.cs
-│   ├── sample-input.json
-│   ├── seed-data.json
-│   └── output.txt
+│   ├── seed-data2.json
+│   ├── sample-input2.json
+│   ├── example-output.txt
+│   
 ├── Models/
 │   ├── RenderRequest.cs
 │   └── TemplateNode.cs
@@ -33,97 +53,155 @@ RuleTemplateClassification/
 ├── Services/
 │   └── RenderService.cs
 ├── Program.cs
+├── RuleTemplateClassification.csproj
 └── RuleTemplateClassification.http
 ```
 
-## How It Works
+## Runtime Flow
 
-1. The API receives a `POST /render` request.
-2. The request body is bound to `RenderRequest`.
-3. `RenderService` loads all `TemplateNode` rows from SQLite, ordered by `Order` and `SectionNumber`.
-4. Each node is routed to the matching rule handler according to `RuleType`.
-5. Non-empty rendered lines are joined into the final output.
-6. The rendered output is returned in the HTTP response and also written to `Data/output.txt`.
+1. `Program.cs` receives a `POST /render` request.
+2. ASP.NET Core binds the body to `RenderRequest`.
+3. `RenderService` loads template nodes from SQLite.
+4. Nodes are ordered by `Order`, then by `SectionNumber`.
+5. Each node is sent to the handler matching its `RuleType`.
+6. Empty handler results are skipped.
+7. Non-empty results are prefixed with the section number.
+8. The final text is returned and written to `Data/output.txt`.
 
-## Request Format
+## Request Example
 
-The API expects a JSON object with two top-level sections:
+The active HTTP client file sends:
+
+```http
+POST http://localhost:5225/render
+Content-Type: application/json
+
+< Data/sample-input2.json
+```
+
+The request shape is:
 
 ```json
 {
   "fields": {
-    "OfficeName": "Example Office",
+    "OfficeName": "משרד האוצר",
+    "DepartmentName": "אגף מערכות מידע",
     "BidNumber": "123/2026",
-    "BidName": "Software Services",
+    "BidName": "שירותי תוכנה",
+    "IsIntroEdited": "false",
     "IsBasket": "true",
-    "IsSingleWinner": "true",
+    "IsSingleWinner": "false",
     "WinnerCount": "3",
-    "ExtensionMonths": "12"
+    "DurationMonths": "24",
+    "ExtensionMonths": "12",
+    "TenderBoxType": "Regular"
   },
   "collections": {
     "Baskets": [
       {
         "BasketNumber": "1",
-        "BasketName": "Development",
-        "BasketScopeInShekels": "250,000"
-      },
-      {
-        "BasketNumber": "2",
-        "BasketName": "Maintenance",
-        "BasketScopeInShekels": "150,000"
+        "BasketName": "פיתוח מערכות",
+        "BasketScopeInShekels": "250,000",
+        "BasketOptionInShekels": "50,000"
       }
     ]
   }
 }
 ```
 
-`fields` is used for regular placeholders and boolean-like conditions.
+The full sample request is available at:
 
-`collections` is used for repeated sections. Each collection item is a dictionary of placeholders for one repeated rendered line.
+```text
+Data/sample-input2.json
+```
 
-Important: condition values are currently compared as strings. Use `"true"` and `"false"` rather than JSON booleans `true` and `false`.
+## Template Data
 
-## Template Seed Format
+Template nodes are seeded from:
 
-Template rules are loaded from `Data/seed-data.json` into the `TemplateNodes` table.
+```text
+Data/seed-data2.json
+```
 
-Each template node contains:
+Each node describes one rendered section:
 
 ```json
 {
-  "id": 1,
-  "sectionNumber": "2.1",
+  "id": 17,
+  "sectionNumber": "1.16",
   "parentId": null,
-  "order": 1,
-  "ruleType": "FillField",
-  "textPlaceholder": "The office {{OfficeName}} published bid {{BidNumber}}.",
-  "fieldName": null,
+  "order": 17,
+  "ruleType": "RepetitiveField",
+  "textPlaceholder": "סל {{BasketNumber}} - {{BasketName}} | היקף התקשרות מירבי: {{BasketScopeInShekels}} ש\"ח | זכות ברירה: {{BasketOptionInShekels}}",
+  "fieldName": "Baskets",
   "conditionFieldName": null,
   "expectedValue": null
 }
 ```
 
-### Rule Types
+### Template Node Fields
 
-`FillField`
+`Id`
 
-Replaces placeholders in `textPlaceholder` using values from `fields`.
+Numeric identifier stored in the database.
+
+`SectionNumber`
+
+The section number printed before the rendered text, for example `1.16`.
+
+`ParentId`
+
+Optional parent node id. `RenderService` currently uses this to skip child nodes whose parent was not rendered.
+
+`Order`
+
+Controls rendering order.
+
+`RuleType`
+
+Determines which handler processes the node.
+
+`TextPlaceholder`
+
+The template text. Placeholders use double curly braces, for example `{{OfficeName}}`.
+
+`FieldName`
+
+Used by optional and repetitive rules.
+
+`ConditionFieldName`
+
+Used by conditional and alternative rules.
+
+`ExpectedValue`
+
+The string value required for a condition to pass.
+
+## Rule Types
+
+### FillField
+
+Replaces placeholders in `TextPlaceholder` with matching values from `fields`.
 
 Example:
 
 ```text
-{{OfficeName}}
+מכרז {{BidNumber}}
 ```
 
-is replaced with:
+becomes:
 
 ```text
-Example Office
+מכרז 123/2026
 ```
 
-`ConditionalField`
+### ConditionalField
 
-Renders the node only when `fields[conditionFieldName]` equals `expectedValue`.
+Renders only when:
+
+```text
+fields[ConditionFieldName] == ExpectedValue
+```
 
 Example:
 
@@ -135,42 +213,128 @@ Example:
 }
 ```
 
-`AlternativeField`
+This renders only when the request contains:
 
-Uses the same comparison behavior as `ConditionalField`. It is useful when two template nodes represent mutually exclusive alternatives, such as `IsSingleWinner = "true"` and `IsSingleWinner = "false"`.
+```json
+{
+  "fields": {
+    "IsBasket": "true"
+  }
+}
+```
 
-`OptionalField`
+### AlternativeField
 
-Renders the node only when `fields` contains the configured `fieldName`.
+Uses the same condition logic as `ConditionalField`.
 
-`RepetitiveField`
+This is useful for mutually exclusive text variants. For example, one node can render when `IsSingleWinner` is `"true"`, and another can render when `IsSingleWinner` is `"false"`.
 
-Uses `fieldName` as the collection name, then renders the node once for each item in that collection.
+### OptionalField
+
+Renders only when `fields` contains the node's `FieldName`.
 
 Example:
 
 ```json
 {
-  "ruleType": "RepetitiveField",
-  "fieldName": "Baskets",
-  "textPlaceholder": "Basket {{BasketNumber}} - {{BasketName}}"
+  "ruleType": "OptionalField",
+  "fieldName": "ExtensionMonths"
 }
 ```
 
-with:
+If `ExtensionMonths` exists in the request, the section is rendered. If it is missing, the section is skipped.
+
+### RepetitiveField
+
+Renders once for each item in a named collection.
+
+Example node:
+
+```json
+{
+  "ruleType": "RepetitiveField",
+  "fieldName": "Baskets",
+  "textPlaceholder": "סל {{BasketNumber}} - {{BasketName}}"
+}
+```
+
+Example request:
 
 ```json
 {
   "collections": {
     "Baskets": [
-      { "BasketNumber": "1", "BasketName": "Development" },
-      { "BasketNumber": "2", "BasketName": "Maintenance" }
+      {
+        "BasketNumber": "1",
+        "BasketName": "פיתוח מערכות"
+      },
+      {
+        "BasketNumber": "2",
+        "BasketName": "תחזוקת מערכות"
+      }
     ]
   }
 }
 ```
 
-## Running Locally
+The handler renders one line per collection item.
+
+## Database Behavior
+
+This project currently uses:
+
+```csharp
+db.Database.EnsureCreated();
+```
+
+That means the SQLite database schema is created directly from the current EF Core model when the database does not exist.
+
+The app does not currently rely on EF migrations.
+
+After creating the schema, `DatabaseSetup` seeds template nodes from:
+
+```text
+Data/seed-data2.json
+```
+
+Seeding only happens when the `TemplateNodes` table is empty:
+
+```csharp
+if (db.TemplateNodes.Any()) return;
+```
+
+## Updating Seed Data
+
+Because seeding only runs when `TemplateNodes` is empty, editing `Data/seed-data2.json` does not automatically update an existing SQLite database.
+
+For local development, the simplest refresh flow is:
+
+1. Stop the application.
+2. Delete the local SQLite files:
+
+```text
+app.db
+app.db-shm
+app.db-wal
+```
+
+3. Run the application again:
+
+```bash
+dotnet run
+```
+
+`EnsureCreated()` will recreate the database, and the current `seed-data2.json` will be inserted.
+
+Alternatively, clear only the seeded table:
+
+```sql
+DELETE FROM TemplateNodes;
+```
+
+Then restart the app so the seed file is inserted again.
+
+## Running The Project
 
 From the project directory:
 
@@ -186,115 +350,49 @@ The HTTP profile listens on:
 http://localhost:5225
 ```
 
-Send a request:
+Send a request with curl:
 
 ```bash
 curl -X POST http://localhost:5225/render \
   -H "Content-Type: application/json" \
-  --data-binary @Data/sample-input.json
+  --data-binary @Data/sample-input2.json
 ```
 
-You can also use `RuleTemplateClassification.http` from Rider or another IDE HTTP client.
-
-## Database Setup
-
-The app uses SQLite through Entity Framework Core. On startup, `DatabaseSetup.Initialize` runs:
-
-```csharp
-db.Database.Migrate();
-```
-
-Then it inserts rows from `Data/seed-data.json` only if the `TemplateNodes` table is empty.
-
-If you do not have migrations yet, create one:
-
-```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
-
-If `dotnet ef` is not installed:
-
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-## Updating Seed Data
-
-Changes to `Data/seed-data.json` are not automatically synchronized into an existing database, because seeding stops when `TemplateNodes` already contains rows.
-
-For local development, use one of these approaches:
-
-Clear the table and restart:
-
-```sql
-DELETE FROM TemplateNodes;
-```
-
-Or delete the local SQLite files and recreate the database:
+Or run the request from:
 
 ```text
-app.db
-app.db-shm
-app.db-wal
-```
-
-Then run:
-
-```bash
-dotnet ef database update
-dotnet run
+RuleTemplateClassification.http
 ```
 
 ## Example Output
 
-The API returns a rendered plain-text document. A typical output looks like:
+The repository includes a real example output at:
 
 ```text
-1. State of Israel - Example Office
-2.1. The office Example Office published bid 123/2026 named Software Services.
-2.2. This bid contains baskets.
-2.3. The buyer may choose a single winner.
-2.5. The buyer may extend the agreement by 12 months.
-2.6. Basket 1 - Development, scope: 250,000
-Basket 2 - Maintenance, scope: 150,000
+Data/example-output.txt
 ```
 
-The current sample data may contain Hebrew text. The rendering logic is language-agnostic and works by replacing placeholder tokens.
+Excerpt:
 
-## Troubleshooting
-
-`SQLite Error 1: no such table: TemplateNodes`
-
-The database exists but the schema was not created. Create and apply migrations:
-
-```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+```text
+1. מדינת ישראל - משרד האוצר
+1.1. אגף: אגף מערכות מידע
+1.2. מכרז 123/2026
+1.3. לשירותי תוכנה
+1.8. מכרז זה הוא "מכרז סלים" בו המציעים יכולים להגיש את הצעתם לחלקים שונים של המכרז, כמפורט במסגרת מסמכי המכרז.
+1.10. המזמין רשאי לבחור עד 3 זוכים במכרז.
+1.16. סל 1 - פיתוח מערכות | היקף התקשרות מירבי: 250,000 ש"ח | זכות ברירה: 50,000
+סל 2 - תחזוקת מערכות | היקף התקשרות מירבי: 150,000 ש"ח | זכות ברירה: ללא
+סל 3 - בדיקות ואבטחת איכות | היקף התקשרות מירבי: 100,000 ש"ח | זכות ברירה: 25,000
+1.19. המועד האחרון להגשת הצעות במכרז הוא בתאריך 30/06/2026 בשעה 14:00.
 ```
 
-`seed-data.json` changed but output did not change
+## Notes And Limitations
 
-The database still contains old rows. Clear `TemplateNodes` or delete the local SQLite files, then restart the app.
-
-`RepetitiveField` returns an empty line
-
-Check that the database row has a `fieldName` matching a key under `collections`. For example, `fieldName = "Baskets"` requires:
-
-```json
-{
-  "collections": {
-    "Baskets": []
-  }
-}
-```
-
-`ConditionalField` does not render
-
-Check that `fields` contains the exact condition key and value. Values are compared as strings, so `"true"` is different from `true`.
-
-## Notes
-
-- `Data/output.txt` is generated by the app and should not be treated as source data.
+- Condition values are compared as strings, so use `"true"` / `"false"` instead of JSON booleans.
+- `EnsureCreated()` is convenient for this assignment/demo, but it is not a migration strategy for production systems.
+- `Data/output.txt` is generated on every render request.
+- `Data/example-output.txt` is a committed example result.
 - Local SQLite database files should not be committed.
-- `Data/sample-input.json` and `Data/seed-data.json` are part of the demo and should be committed.
+- The current response format is plain text, not DOCX or PDF.
+
